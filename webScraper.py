@@ -3,14 +3,16 @@ import requests
 
 app = Flask(__name__)
 
+
+
 @app.route('/callback', methods=['GET'])
 def callback():
     # Handle the authorization code received from the OAuth provider
     authorization_code = request.args.get('code')
 
     # Make a POST request to the token endpoint to exchange the authorization code for an access token
-client_id = 'example'
-client_secret = 'verysecret'
+client_id = 'slisealtradescraper'
+client_secret = 'zFq9C5h0RNMA'
 grant_type = 'client_credentials'
 scope = 'service:psapi'
 
@@ -22,7 +24,23 @@ payload = {
     'scope': scope
 }
 
-response = requests.post('https://www.pathofexile.com/oauth/token', data=payload)
+client_id = 'slisealtradescraper'
+version = '1.0.0'
+contact = 'marsandnoa@gmail.com'
+
+headers = {
+    'User-Agent': f'OAuth {client_id}/{version} (contact: {contact}) StrictMode'
+}
+
+response = requests.post('https://www.pathofexile.com/oauth/token', data=payload,headers=headers)
+
+# Access the response headers
+headers = response.headers
+
+# Print the response headers
+print(response.status_code)
+for header, value in headers.items():
+    print(header + ": " + value)
 
 if response.status_code == 200:
     # Access token obtained successfully
@@ -40,3 +58,28 @@ if response.status_code == 200:
 else:
     # Handle token request failure
     print('Token request failed')
+
+headers = {
+    'Authorization': f'Bearer {access_token}',
+    'User-Agent': f'OAuth {client_id}/{version} (contact: {contact}) StrictMode'
+}
+
+base_url = 'https://api.pathofexile.com'
+endpoint = '/public-stash-tabs'
+
+# Construct the URL
+url = f"{base_url}{endpoint}"
+
+# Send the GET request
+response = requests.get(url, headers=headers)
+
+# Check the response status code
+if response.status_code == 200:
+    # Request successful, handle the response data
+    data = response.json()
+    # Process the data as needed
+else:
+    # Request failed, handle the error
+    print(f"Request failed with status code: {response.status_code}")
+
+print(data)
