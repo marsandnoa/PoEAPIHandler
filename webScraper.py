@@ -57,7 +57,11 @@ while(True):
 
     #target item format, see API for list of item keys
     TargetItem={'name':"Chin Sol"}
+    league='Crucible'
 
+    f = open("output.txt", "w")
+    f.write("Search for "+TargetItem['name'])
+    f.close()
     # Check the response status code
     if response.status_code == 200:
         data = response.json()
@@ -68,15 +72,18 @@ while(True):
             for stash in stashes:
                 stash_id = stash['id']
                 public = stash['public']
-                for item in stash['items']:
-                    isidentical=True
-                    for key in TargetItem.keys():
-                        if(TargetItem[key]):
-                            if TargetItem[key] != item[key]:
-                                isidentical=False;
-                    if(isidentical):
-                        #need to implement stuff when target item found
-                        print(item)
+                if(stash['league']==league):
+                    for item in stash['items']:
+                        isidentical=True
+                        for key in TargetItem.keys():
+                            if(TargetItem[key]):
+                                if TargetItem[key] != item[key]:
+                                    isidentical=False;
+                        if(isidentical):
+                            f = open("output.txt", "a")
+                            f.write(item[key])
+                            print(item[key])
+                            f.close()
 
             next_url = f"{base_url}{endpoint}/{next_change_id}"
             next_response = requests.get(next_url, headers=headers)
